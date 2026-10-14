@@ -1,0 +1,98 @@
+#Флаг
+RED = '\u001b[41m'
+WHITE = '\u001b[47m'
+END = '\u001b[0m'
+for i in range(8):
+    if i == 0 or i == 7:
+        print(f'{WHITE}{" "*16}{END}')
+    if i == 1 or i == 6:
+        print(f'{WHITE}{" "*6}{RED}{" "*4}{WHITE}{" "*6}{END}')
+    if i == 2 or i == 5:
+        print(f'{WHITE}{" "*5}{RED}{" "*6}{WHITE}{" "*5}{END}')
+    if i > 2 and i < 5:
+        print(f'{WHITE}{" "*4}{RED}{" "*8}{WHITE}{" "*4}{END}')
+
+#Узор
+ESC = '\033['
+SIZE = 5  
+CHAR = '*'
+
+print(ESC + '2J',end='')   
+print(ESC + 'H',end='')
+
+def draw(cent, top, size, char):
+       for row in range(2 * size - 1):
+        if row < size:
+            offset = row
+        else:
+            offset = 2 * size - 2 - row
+
+        left  = cent - offset
+        right = cent + offset
+
+        print(f'{ESC}{top + row};{left}H{char}', end='')
+        print(f'{ESC}{top + row};{right}H{char}', end='')
+
+
+draw(cent=SIZE, top=1, size=SIZE, char=CHAR)
+draw(cent=3*SIZE - 2, top=1, size=SIZE, char=CHAR)
+
+print(f'{ESC}{2*SIZE + 2};1H')
+
+
+#Анимация
+import os
+import time
+
+clear = "cls"
+colors = [196, 214, 226, 46]
+pos = [1, 6, 11, 6]
+col = 20                
+print('\x1b[?25l', end='')
+
+frame = 0
+while True:
+    os.system(clear)
+
+    color = colors[frame % 4]
+    row   = pos[frame % 4]
+
+    print(f'\x1b[{row};{col}H', end='')
+    print(f'\x1b[48;5;{color}m    \x1b[0m', end='')  
+
+    time.sleep(0.3)
+    frame += 1
+
+#Диаграмма
+file = open('sequence.txt', 'r')
+numbers = []
+for line in file:
+    line = line.strip() 
+    numbers.append(float(line))
+file.close()
+
+more5 = []
+less5 = []
+
+for n in numbers:
+    if n > 0:
+        continue
+    if n > -5:  
+        more5.append(n)
+    else:               
+        less5.append(n)
+        
+a = len(more5)
+b = len(less5)
+summ = a + b
+
+pera = a / summ * 100
+perb = b / summ * 100
+
+width = 50
+bara = round(pera / 100 * width)
+barb = width - bara
+
+print('больше -5:  ' + '█' * bara + f'  {pera:.1f}%')
+print('меньше -5:  ' + '█' * barb + f'  {perb:.1f}%')
+
