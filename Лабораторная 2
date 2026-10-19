@@ -1,3 +1,4 @@
+#Исламова Софья 559447
 #csv
 from csv import reader
 import random
