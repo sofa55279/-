@@ -1,0 +1,98 @@
+#csv
+from csv import reader
+import random
+
+file1 = 'books.csv'
+file2 = 'link.txt'
+
+
+#Сколько названий длиннее 30 символов
+print('1.Длинные названия')
+count = 0
+
+with open(file1, 'r', encoding='windows-1251') as csvfile:
+    table = reader(csvfile, delimiter=';')
+    next(table)
+    for row in table:
+        title = row[1]
+        if len(title) > 30:
+            count += 1
+
+print(f'Названий длиннее 30 символов: {count}')
+
+#Поиск по автору с ограничением по году
+print('2.Поиск по автору')
+search = input('Введите автора: ').lower()
+found = 0
+
+with open(file1, 'r', encoding='windows-1251') as csvfile:
+    table = reader(csvfile, delimiter=';')
+    next(table)
+    for row in table:
+        author = row[3]
+        d = row[6]
+        index = author.lower().find(search)
+        if index != -1:
+            date = d[:10]
+            year = int(date.split('.')[2])
+            if 2016 <= year <= 2018:
+                print(f'{row[1]} ({year})')
+                found += 1
+
+if found == 0:
+    print('Ничего не найдено.')
+else:
+    print(f'Найдено: {found}')
+
+    
+#Генератор библиографических ссылок
+print('3.Библиографические ссылки')
+
+books = []
+with open(file1, 'r', encoding='windows-1251') as csvfile:
+    table = reader(csvfile, delimiter=';')
+    next(table)
+    for row in table:
+        books.append(row)
+
+chosen = random.sample(books, 20)
+
+with open(file2, 'w', encoding='utf-8') as output:
+    i = 0
+    for row in chosen:
+        i += 1
+        author = row[3]
+        title = row[1]
+        year = row[6][:10]
+        output.write(f'{i}. {author}. {title} - {year}\n')
+print('Проверьте файл :)')
+
+
+
+
+#xml
+import xml.dom.minidom as minidom
+
+xml_file = open('currency.xml', 'r')
+xml_data = xml_file.read()
+dom = minidom.parseString(xml_data)
+dom.normalize()
+elem = dom.getElementsByTagName('Valute')
+
+codes = []
+for node in elem:
+    for child in node.childNodes:
+        if child.nodeType == 1:
+            if child.tagName == 'CharCode':
+                if child.firstChild.nodeType == 3:
+                    code = child.firstChild.data
+            if child.tagName == 'Nominal':
+                if child.firstChild.nodeType == 3:
+                    nominal = int(child.firstChild.data)
+                    if nominal == 10 or nominal == 100:
+                        codes.append(code)
+
+print('Коды валют с номиналом 10 или 100:')
+for c in codes:
+    print(c)
+xml_file.close()
